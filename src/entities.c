@@ -47,6 +47,12 @@ void DrawSprite(Sprite *sprite, Vector2 target)
 
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta)
 {
+    if (player->enemyCollisionFrames > 0 && player->enemyCollisionFrames > 20)
+    {
+        player->isAlive = false;
+        return;
+    }
+
     int direction = 0;
 
     if (IsKeyDown(KEY_LEFT))
@@ -113,9 +119,12 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
     UpdateSprite(&(player->sprite), IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT));
 }
 
-void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delta)
+void UpdateEnemy(Enemy *enemy, EnvItem *envItems, Player *player, int envItemsLength, float delta)
 {
-    enemy->rect.x += enemy->direction * PLAYER_HOR_SPD * delta;
+    if (enemy->speed == 0)
+        return;
+
+    enemy->rect.x += enemy->direction * enemy->speed * delta;
 
     Rectangle *p = &(enemy->rect);
 
@@ -142,6 +151,34 @@ void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delt
                 p->x = ei->rect.x + ei->rect.width;
                 enemy->direction *= -1;
             }
+        }
+    }
+
+    if (CheckCollisionRecs(enemy->rect, player->rect))
+    {
+
+        Rectangle r = GetCollisionRec(enemy->rect, player->rect);
+
+        if (r.height == player->rect.height)
+        {
+            player->enemyCollisionFrames += 1;
+            if (enemy->direction == 1)
+            {
+                p->x = r.x - p->width;
+                // enemy->direction *= -1;
+            }
+            else if (enemy->direction == -1)
+            {
+                p->x = player->rect.x + player->rect.width;
+                // enemy->direction *= -1;
+            }
+            enemy->speed = 0.1;
+        }
+
+        if (IsKeyDown(KEY_ENTER) && player->enemyCollisionFrames > 0 && player->enemyCollisionFrames < 20)
+        {
+            enemy->speed = 0; // the enemey killed
+            player->enemyCollisionFrames = 0;
         }
     }
 

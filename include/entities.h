@@ -32,6 +32,8 @@ typedef struct Player
     float speed;
     bool canJump;
     Sprite sprite;
+    int enemyCollisionFrames;
+    bool isAlive;
 } Player;
 
 typedef struct Enemy
@@ -54,7 +56,7 @@ void UpdateSprite(Sprite *sprite, bool active);
 void DrawSprite(Sprite *sprite, Vector2 target);
 
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta);
-void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLenght, float delta);
+void UpdateEnemy(Enemy *enemy, EnvItem *envItems, Player *player, int envItemsLenght, float delta);
 
 void UpdateGameCamera(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
 #endif // GC_ENTITIES_H

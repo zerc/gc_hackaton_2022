@@ -23,6 +23,8 @@ int main(void)
     player.speed = 0;
     player.canJump = false;
     player.sprite = InitSprite("../assets/player.png", 72, 8, 3);
+    player.enemyCollisionFrames = 0; // no collision with an enemy
+    player.isAlive = true;
 
     // Init Environment
     EnvItem envItems[] = {
@@ -51,24 +53,25 @@ int main(void)
         {
             .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
             .rect = {600 - 72 / 2, 300 - unitHeight, 72, unitHeight},
-            .speed = 1,
+            .speed = 250,
             .direction = -1,
         },
         {
             .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
             .rect = {300 - 72, 100 - unitHeight, 72, unitHeight},
-            .speed = 3,
+            .speed = 300,
             .direction = 1,
         },
         {
             .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
             .rect = {400 - 72, -100 - unitHeight, 72, unitHeight},
-            .speed = 3,
+            .speed = 350,
             .direction = 1,
         },
 
     };
     int enemiesCount = sizeof(enemies) / sizeof(enemies[0]);
+    int activeEnemiesCount = 0;
 
     Camera2D camera = {0};
     camera.target = (Vector2){player.rect.x, player.rect.y};
@@ -86,17 +89,27 @@ int main(void)
         //----------------------------------------------------------------------------------
         float deltaTime = GetFrameTime();
 
-        for (int i = 0; i < enemiesCount; i++)
-            UpdateEnemy(&enemies[i], envItems, envItemsLength, deltaTime);
-
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
-        UpdateGameCamera(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
 
-        if (IsKeyPressed(KEY_R))
+        if (player.isAlive)
         {
-            camera.zoom = 1.0f;
-            player.rect.x = 400;
-            player.rect.y = 280;
+            activeEnemiesCount = 0;
+
+            for (int i = 0; i < enemiesCount; i++)
+            {
+                UpdateEnemy(&enemies[i], envItems, &player, envItemsLength, deltaTime);
+                if (enemies[i].speed > 0)
+                    activeEnemiesCount += 1;
+            }
+
+            UpdateGameCamera(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
+
+            if (IsKeyPressed(KEY_R))
+            {
+                camera.zoom = 1.0f;
+                player.rect.x = 400;
+                player.rect.y = 280;
+            }
         }
 
         //----------------------------------------------------------------------------------
@@ -119,7 +132,18 @@ int main(void)
 
         EndMode2D();
 
-        DrawFPS(10, 10);
+        if (player.isAlive && activeEnemiesCount > 0)
+        {
+            DrawFPS(10, 10);
+        }
+        else if (activeEnemiesCount == 0)
+        {
+            DrawText("Your generic merchant is now Cardless!", 20, 20, 10, BLACK);
+        }
+        else if (!player.isAlive)
+        {
+            DrawText("Game Over", 20, 20, 10, BLACK);
+        }
 
         EndDrawing();
         //----------------------------------------------------------------------------------
