@@ -48,5 +48,5 @@ void DrawSprite(Sprite *sprite, Vector2 target);
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta);
 void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLenght, float delta);
 
-void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
+void UpdateGameCamera(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
 #endif // GC_ENTITIES_H

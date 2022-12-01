@@ -1,4 +1,7 @@
+#include <stdio.h>
+
 #include "entities.h"
+#include "raymath.h"
 
 Sprite InitSprite(const char *fileName, int width, int framesSpeed, int framesTotal)
 {
@@ -69,12 +72,20 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
         {
             hitObstacle = 1;
             player->speed = 0.0f;
+
             Rectangle r = GetCollisionRec(player->rect, ei->rect);
 
-            if (r.width == player->rect.width)
+            if (r.width > r.height)
             {
-                // ground collision - limit y
-                p->y = r.y - p->height;
+                if (p->y < ei->rect.y)
+                {
+                    p->y = r.y - p->height;
+                }
+                else
+                {
+                    // Do not allow to jump over the ceiling
+                    p->y += 1;
+                }
             }
             // "frontal" collision - limit x
             else if (direction == 1)
@@ -136,3 +147,20 @@ void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delt
 
     UpdateSprite(&(enemy->sprite), enemy->speed > 0);
 }
+
+void UpdateGameCamera(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+{
+    static float minSpeed = 30;
+    static float minEffectLength = 10;
+    static float fractionSpeed = 0.8f;
+
+    camera->offset = (Vector2){width / 2.0f, height / 2.0f};
+    Vector2 diff = Vector2Subtract((Vector2){player->rect.x, player->rect.y}, camera->target);
+    float length = Vector2Length(diff);
+
+    if (length > minEffectLength)
+    {
+        float speed = fmaxf(fractionSpeed * length, minSpeed);
+        camera->target = Vector2Add(camera->target, Vector2Scale(diff, speed * delta / length));
+    }
+};
