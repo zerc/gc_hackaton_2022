@@ -5,7 +5,15 @@
 
 #define G 1000
 #define PLAYER_JUMP_SPD 650.0f
-#define PLAYER_HOR_SPD 200.0f
+#define PLAYER_HOR_SPD 300.0f
+
+enum COLLISION_GROUP
+{
+    WITH_NONE,
+    WITH_ALL,
+    WITH_PLAYER_ONLY,
+    WITH_ENEMY_ONLY,
+};
 
 typedef struct Sprite
 {
@@ -37,8 +45,8 @@ typedef struct Enemy
 typedef struct EnvItem
 {
     Rectangle rect;
-    int blocking;
     Color color;
+    enum COLLISION_GROUP collisionGroup;
 } EnvItem;
 
 Sprite InitSprite(const char *fileName, int width, int framesSpeed, int framesTotal);

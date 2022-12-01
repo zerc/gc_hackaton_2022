@@ -68,7 +68,7 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
     for (int i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
-        if (ei->blocking && CheckCollisionRecs(player->rect, ei->rect))
+        if ((ei->collisionGroup == WITH_ALL || ei->collisionGroup == WITH_PLAYER_ONLY) && CheckCollisionRecs(player->rect, ei->rect))
         {
             hitObstacle = 1;
             player->speed = 0.0f;
@@ -122,7 +122,7 @@ void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delt
     for (int i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
-        if (ei->blocking && CheckCollisionRecs(enemy->rect, ei->rect))
+        if ((ei->collisionGroup == WITH_ALL || ei->collisionGroup == WITH_ENEMY_ONLY) && CheckCollisionRecs(enemy->rect, ei->rect))
         {
             Rectangle r = GetCollisionRec(enemy->rect, ei->rect);
 
