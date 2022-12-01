@@ -19,13 +19,7 @@ int main(void)
     player.rect = (Rectangle){400 - 72 / 2, 280 - 92, 72, 92};
     player.speed = 0;
     player.canJump = false;
-
-    Texture2D playerTexture = LoadTexture("../assets/player.png");
-    Rectangle frameRec = {0.0f, 0.0f, 72, 92};
-    int currentFrame = 0;
-
-    int framesCounter = 0;
-    int framesSpeed = 8;
+    player.sprite = InitSprite("../assets/player.png", 72, 8, 3);
 
     // Init Environment
     EnvItem envItems[] = {
@@ -58,37 +52,13 @@ int main(void)
         float deltaTime = GetFrameTime();
 
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
-
-        camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
-
-        if (camera.zoom > 3.0f)
-            camera.zoom = 3.0f;
-        else if (camera.zoom < 0.25f)
-            camera.zoom = 0.25f;
+        UpdateCameraCenterInsideMap(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
 
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
             player.rect.x = 400;
             player.rect.y = 280;
-        }
-
-        UpdateCameraCenterInsideMap(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
-
-        framesCounter++;
-
-        if (framesCounter >= (60 / framesSpeed))
-        {
-            framesCounter = 0;
-            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT))
-            {
-                currentFrame++;
-
-                if (currentFrame > 3)
-                    currentFrame = 0;
-
-                frameRec.x = (float)currentFrame * 72;
-            }
         }
 
         //----------------------------------------------------------------------------------
@@ -104,14 +74,11 @@ int main(void)
         for (int i = 0; i < envItemsLength; i++)
             DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
-        DrawTextureRec(playerTexture, frameRec, (Vector2){player.rect.x, player.rect.y}, WHITE);
+        DrawSprite(&(player.sprite), (Vector2){player.rect.x, player.rect.y});
 
         EndMode2D();
 
-        DrawText("Controls:", 20, 20, 10, BLACK);
-        DrawText("- Right/Left to move", 40, 40, 10, DARKGRAY);
-        DrawText("- Space to jump", 40, 60, 10, DARKGRAY);
-        DrawText("- Mouse Wheel to Zoom in-out, R to reset zoom", 40, 80, 10, DARKGRAY);
+        DrawFPS(10, 10);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
