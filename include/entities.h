@@ -9,7 +9,7 @@
 
 typedef struct Player
 {
-    Vector2 position;
+    Rectangle rect;
     float speed;
     bool canJump;
 } Player;

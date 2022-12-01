@@ -14,4 +14,9 @@ add_subdirectory(vendor/raylib)
 
 add_subdirectory(src)
 
+add_custom_target(copy-assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets
+)
+add_dependencies(gc_exec copy-assets)
+
 enable_testing()

@@ -14,21 +14,32 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Make the world Cardless");
 
+    // Init Player
     Player player = {0};
-    player.position = (Vector2){400, 280};
+    player.rect = (Rectangle){400 - 66 / 2, 280 - 92, 66, 92};
     player.speed = 0;
     player.canJump = false;
+
+    Texture2D playerTexture = LoadTexture("../assets/p1_spritesheet.png");
+    Rectangle frameRec = {0.0f, 0.0f, 72, 97};
+    int currentFrame = 0;
+
+    int framesCounter = 0;
+    int framesSpeed = 8;
+
+    // Init Environment
     EnvItem envItems[] = {
         {{0, 0, 1000, 400}, 0, LIGHTGRAY},
         {{0, 400, 10000, 300}, 1, GREEN},
         {{300, 200, 400, 10}, 1, GRAY},
         {{250, 300, 100, 10}, 1, GRAY},
-        {{650, 300, 100, 10}, 1, GRAY}};
+        {{650, 300, 100, 10}, 1, GRAY},
+    };
 
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
     Camera2D camera = {0};
-    camera.target = player.position;
+    camera.target = (Vector2){player.rect.x, player.rect.y};
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
@@ -55,10 +66,28 @@ int main(void)
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
-            player.position = (Vector2){400, 280};
+            player.rect.x = 400;
+            player.rect.y = 280;
         }
 
         UpdateCameraCenterInsideMap(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
+
+        framesCounter++;
+
+        if (framesCounter >= (60 / framesSpeed))
+        {
+            framesCounter = 0;
+            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT))
+            {
+                currentFrame++;
+
+                if (currentFrame > 3)
+                    currentFrame = 0;
+
+                frameRec.x = (float)currentFrame * 72 + 2;
+            }
+        }
+
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -72,8 +101,8 @@ int main(void)
         for (int i = 0; i < envItemsLength; i++)
             DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
-        Rectangle playerRect = {player.position.x - 20, player.position.y - 40, 40, 40};
-        DrawRectangleRec(playerRect, GOLD);
+        // DrawRectangleRec(player.rect, GOLD);
+        DrawTextureRec(playerTexture, frameRec, (Vector2){player.rect.x, player.rect.y}, WHITE);
 
         EndMode2D();
 
@@ -96,7 +125,7 @@ int main(void)
 
 void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
 {
-    camera->target = player->position;
+    camera->target = (Vector2){player->rect.x, player->rect.y};
     camera->offset = (Vector2){width / 2.0f, height / 2.0f};
     float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
