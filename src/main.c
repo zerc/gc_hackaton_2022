@@ -138,11 +138,15 @@ int main(void)
         }
         else if (activeEnemiesCount == 0)
         {
-            DrawText("Your generic merchant is now Cardless!", 20, 20, 10, BLACK);
+            DrawRectangle(0, 0, screenWidth, screenHeight, YELLOW);
+            DrawText("<Your generic merchant> ltd", 20, 20, 40, BLACK);
+            DrawText("is", 60, 60, 40, BLACK);
+            DrawText("Cardless!", 120, 120, 60, BLACK);
         }
         else if (!player.isAlive)
         {
-            DrawText("Game Over", 20, 20, 10, BLACK);
+            DrawRectangle(0, 0, screenWidth, screenHeight, RED);
+            DrawText("Game Over", 20, 20, 40, BLACK);
         }
 
         EndDrawing();
