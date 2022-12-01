@@ -16,12 +16,12 @@ int main(void)
 
     // Init Player
     Player player = {0};
-    player.rect = (Rectangle){400 - 66 / 2, 280 - 92, 66, 92};
+    player.rect = (Rectangle){400 - 72 / 2, 280 - 92, 72, 92};
     player.speed = 0;
     player.canJump = false;
 
-    Texture2D playerTexture = LoadTexture("../assets/p1_spritesheet.png");
-    Rectangle frameRec = {0.0f, 0.0f, 72, 97};
+    Texture2D playerTexture = LoadTexture("../assets/player.png");
+    Rectangle frameRec = {0.0f, 0.0f, 72, 92};
     int currentFrame = 0;
 
     int framesCounter = 0;
@@ -30,10 +30,13 @@ int main(void)
     // Init Environment
     EnvItem envItems[] = {
         {{0, 0, 1000, 400}, 0, LIGHTGRAY},
-        {{0, 400, 10000, 300}, 1, GREEN},
-        {{300, 200, 400, 10}, 1, GRAY},
-        {{250, 300, 100, 10}, 1, GRAY},
-        {{650, 300, 100, 10}, 1, GRAY},
+        {{0, 300, 10000, 300}, 1, GREEN},
+        {{300, 200, 50, 100}, 1, GRAY},
+        {{630, 140, 50, 160}, 1, GRAY},
+        {{1030, 140, 50, 160}, 1, GRAY},
+        // {{300, 200, 400, 20}, 1, GRAY},
+        // {{250, 300, 100, 20}, 1, GRAY},
+        // {{650, 300, 100, 20}, 1, GRAY},
     };
 
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
@@ -84,7 +87,7 @@ int main(void)
                 if (currentFrame > 3)
                     currentFrame = 0;
 
-                frameRec.x = (float)currentFrame * 72 + 2;
+                frameRec.x = (float)currentFrame * 72;
             }
         }
 
@@ -101,7 +104,6 @@ int main(void)
         for (int i = 0; i < envItemsLength; i++)
             DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
-        // DrawRectangleRec(player.rect, GOLD);
         DrawTextureRec(playerTexture, frameRec, (Vector2){player.rect.x, player.rect.y}, WHITE);
 
         EndMode2D();
