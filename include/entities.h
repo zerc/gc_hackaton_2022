@@ -31,6 +31,7 @@ typedef struct Enemy
     Sprite sprite;
     Rectangle rect;
     float speed;
+    int direction;
 } Enemy;
 
 typedef struct EnvItem

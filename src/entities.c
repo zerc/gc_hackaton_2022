@@ -44,10 +44,15 @@ void DrawSprite(Sprite *sprite, Vector2 target)
 
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta)
 {
+    int direction = 0;
+
     if (IsKeyDown(KEY_LEFT))
-        player->rect.x -= PLAYER_HOR_SPD * delta;
+        direction = -1;
     if (IsKeyDown(KEY_RIGHT))
-        player->rect.x += PLAYER_HOR_SPD * delta;
+        direction = 1;
+
+    player->rect.x += direction * PLAYER_HOR_SPD * delta;
+
     if (IsKeyDown(KEY_SPACE) && player->canJump)
     {
         player->speed = -PLAYER_JUMP_SPD;
@@ -65,7 +70,21 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
             hitObstacle = 1;
             player->speed = 0.0f;
             Rectangle r = GetCollisionRec(player->rect, ei->rect);
-            p->y = r.y - p->height;
+
+            if (r.width == player->rect.width)
+            {
+                // ground collision - limit y
+                p->y = r.y - p->height;
+            }
+            // "frontal" collision - limit x
+            else if (direction == 1)
+            {
+                p->x = r.x - p->width;
+            }
+            else if (direction == -1)
+            {
+                p->x = ei->rect.x + ei->rect.width;
+            }
         }
     }
 
@@ -85,30 +104,34 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
 
 void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delta)
 {
-    enemy->rect.x -= PLAYER_HOR_SPD * delta;
+    enemy->rect.x += enemy->direction * PLAYER_HOR_SPD * delta;
 
     Rectangle *p = &(enemy->rect);
 
-    int hitObstacle = 0;
     for (int i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
         if (ei->blocking && CheckCollisionRecs(enemy->rect, ei->rect))
         {
-            hitObstacle = 1;
-            enemy->speed = 0.0f;
             Rectangle r = GetCollisionRec(enemy->rect, ei->rect);
-            p->y = r.y - p->height;
-        }
-    }
 
-    if (hitObstacle)
-    {
-    }
-    else
-    {
-        enemy->rect.y += enemy->speed * delta;
-        enemy->speed += G * delta;
+            if (r.width == enemy->rect.width)
+            {
+                // ground collision - limit y
+                p->y = r.y - p->height;
+            }
+            // "frontal" collision - limit x
+            else if (enemy->direction == 1)
+            {
+                p->x = r.x - p->width;
+                enemy->direction *= -1;
+            }
+            else if (enemy->direction == -1)
+            {
+                p->x = ei->rect.x + ei->rect.width;
+                enemy->direction *= -1;
+            }
+        }
     }
 
     UpdateSprite(&(enemy->sprite), enemy->speed > 0);

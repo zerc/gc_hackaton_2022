@@ -16,7 +16,7 @@ int main(void)
 
     // Init Player
     Player player = {0};
-    player.rect = (Rectangle){400 - 72 / 2, 280 - 92, 72, 92};
+    player.rect = (Rectangle){400 - 72 / 2, 300 - 92, 72, 92};
     player.speed = 0;
     player.canJump = false;
     player.sprite = InitSprite("../assets/player.png", 72, 8, 3);
@@ -35,8 +35,9 @@ int main(void)
 
     Enemy enemy = {
         .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
-        .rect = {600 - 72 / 2, 280 - 92, 72, 92},
-        .speed = 0,
+        .rect = {600 - 72 / 2, 300 - 92, 72, 92},
+        .speed = 1,
+        .direction = -1,
     };
 
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
