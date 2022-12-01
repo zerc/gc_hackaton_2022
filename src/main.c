@@ -33,6 +33,12 @@ int main(void)
         // {{650, 300, 100, 20}, 1, GRAY},
     };
 
+    Enemy enemy = {
+        .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
+        .rect = {600 - 72 / 2, 280 - 92, 72, 92},
+        .speed = 0,
+    };
+
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
     Camera2D camera = {0};
@@ -51,7 +57,9 @@ int main(void)
         //----------------------------------------------------------------------------------
         float deltaTime = GetFrameTime();
 
+        UpdateEnemy(&enemy, envItems, envItemsLength, deltaTime);
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
+
         UpdateCameraCenterInsideMap(&camera, &player, envItems, envItemsLength, deltaTime, screenWidth, screenHeight);
 
         if (IsKeyPressed(KEY_R))
@@ -75,6 +83,7 @@ int main(void)
             DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
         DrawSprite(&(player.sprite), (Vector2){player.rect.x, player.rect.y});
+        DrawSprite(&(enemy.sprite), (Vector2){enemy.rect.x, enemy.rect.y});
 
         EndMode2D();
 

@@ -17,7 +17,7 @@ Sprite InitSprite(const char *fileName, int width, int framesSpeed, int framesTo
     return sprite;
 }
 
-void UpdateSprite(Sprite *sp)
+void UpdateSprite(Sprite *sp, bool active)
 {
     sp->framesCounter++;
 
@@ -25,7 +25,7 @@ void UpdateSprite(Sprite *sp)
     {
         sp->framesCounter = 0;
 
-        if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT))
+        if (active)
         {
             sp->frameCurrent++;
 
@@ -80,5 +80,36 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
         player->canJump = false;
     }
 
-    UpdateSprite(&(player->sprite));
+    UpdateSprite(&(player->sprite), IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT));
+}
+
+void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLength, float delta)
+{
+    enemy->rect.x -= PLAYER_HOR_SPD * delta;
+
+    Rectangle *p = &(enemy->rect);
+
+    int hitObstacle = 0;
+    for (int i = 0; i < envItemsLength; i++)
+    {
+        EnvItem *ei = envItems + i;
+        if (ei->blocking && CheckCollisionRecs(enemy->rect, ei->rect))
+        {
+            hitObstacle = 1;
+            enemy->speed = 0.0f;
+            Rectangle r = GetCollisionRec(enemy->rect, ei->rect);
+            p->y = r.y - p->height;
+        }
+    }
+
+    if (hitObstacle)
+    {
+    }
+    else
+    {
+        enemy->rect.y += enemy->speed * delta;
+        enemy->speed += G * delta;
+    }
+
+    UpdateSprite(&(enemy->sprite), enemy->speed > 0);
 }

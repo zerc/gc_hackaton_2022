@@ -26,6 +26,13 @@ typedef struct Player
     Sprite sprite;
 } Player;
 
+typedef struct Enemy
+{
+    Sprite sprite;
+    Rectangle rect;
+    float speed;
+} Enemy;
+
 typedef struct EnvItem
 {
     Rectangle rect;
@@ -34,10 +41,11 @@ typedef struct EnvItem
 } EnvItem;
 
 Sprite InitSprite(const char *fileName, int width, int framesSpeed, int framesTotal);
-void UpdateSprite(Sprite *sprite);
+void UpdateSprite(Sprite *sprite, bool active);
 void DrawSprite(Sprite *sprite, Vector2 target);
 
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta);
-void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
+void UpdateEnemy(Enemy *enemy, EnvItem *envItems, int envItemsLenght, float delta);
 
+void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
 #endif // GC_ENTITIES_H
