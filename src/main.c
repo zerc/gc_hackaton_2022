@@ -19,9 +19,13 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Make the world Cardless");
 
     Texture2D background = LoadTexture("../assets/sky.png");
+    Texture2D brick = LoadTexture("../assets/brick.png");
     Texture2D floorOne = LoadTexture("../assets/floor_1.png");
     Texture2D floorTwo = LoadTexture("../assets/floor_2.png");
     Texture2D floorThree = LoadTexture("../assets/floor_3.png");
+    Texture2D grass = LoadTexture("../assets/grass.png");
+    Texture2D tree = LoadTexture("../assets/tree.png");
+    Texture2D temple = LoadTexture("../assets/temple.png");
 
     // Init Player
     Player player = {0};
@@ -34,26 +38,29 @@ int main(void)
 
     // Init Environment
     EnvItem envItems[] = {
-        {{-600, 300, 2048, 300}, GREEN, 0, WITH_ALL},
+        {{-600, 300, 2048, 300}, GREEN, &grass, WITH_ALL},
         {{120, 100, 780, 200}, GRAY, &floorOne, WITH_NONE},    // facade floor1
         {{120, -100, 780, 200}, GRAY, &floorTwo, WITH_NONE},   // facade floor2
         {{120, -300, 780, 200}, GRAY, &floorThree, WITH_NONE}, // facade floor3
 
-        {{120, 200, 40, 100}, GRAY, 0, WITH_NONE}, // door
-        {{120, -300, 40, 500}, RED, 0, WITH_ALL},  // left wall
-        {{160, 100, 600, 20}, BLUE, 0, WITH_ALL},  // ground floor ceiling
+        {{120, 200, 40, 100}, GRAY, 0, WITH_NONE},     // door
+        {{120, -300, 40, 500}, RED, &brick, WITH_ALL}, // left wall
+        {{160, 100, 600, 20}, BLUE, &brick, WITH_ALL}, // ground floor ceiling
 
-        {{900, -300, 40, 600}, RED, 0, WITH_ALL},  // right wall
-        {{300, -100, 600, 20}, BLUE, 0, WITH_ALL}, // 1st floor ceiling
+        {{900, -300, 40, 600}, RED, &brick, WITH_ALL},  // right wall
+        {{300, -100, 600, 20}, BLUE, &brick, WITH_ALL}, // 1st floor ceiling
 
-        {{160, -300, 740, 20}, BLUE, 0, WITH_ALL}, // 2nd floor ceiling
+        {{160, -300, 740, 20}, BLUE, &brick, WITH_ALL},     // 2nd floor ceiling
+        {{360, -430, 223, 131}, BLANK, &temple, WITH_NONE}, // 2nd floor ceiling
 
-        {{-200, -200, 10, 500}, BLANK, 0, WITH_ALL}, // left wall
+        {{-200, 7, 136, 293}, BLANK, &tree, WITH_ALL}, // left screen limiter
+        {{-200, -200, 10, 500}, BLANK, 0, WITH_ALL},   // left screen limiter
 
         // Limit enemies movement
         {{160, 200, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY},  // ground floor
         {{700, 0, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY},    // 1st floor
         {{300, -200, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY}, // 2nd floor
+        {{750, -200, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY}, // 2nd floor
 
     };
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
@@ -136,7 +143,7 @@ int main(void)
         {
             if (envItems[i].texture)
             {
-                DrawTextureTiled(*(envItems[i].texture), (Rectangle){0, 0, 800, 200}, envItems[i].rect, (Vector2){0, 0}, 0, 1, WHITE);
+                DrawTextureTiled(*(envItems[i].texture), (Rectangle){0, 0, envItems[i].texture->width, envItems[i].texture->height}, envItems[i].rect, (Vector2){0, 0}, 0, 1, WHITE);
             }
             else
             {
