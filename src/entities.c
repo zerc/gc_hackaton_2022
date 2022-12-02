@@ -70,6 +70,15 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
         player->canJump = false;
     }
 
+    if (IsKeyDown(KEY_ENTER) && player->attackFramesCurrent == 0)
+    {
+        player->attackFramesCurrent = player->attackFrames;
+    }
+    else if (player->attackFramesCurrent > 0)
+    {
+        player->attackFramesCurrent -= 1;
+    }
+
     Rectangle *p = &(player->rect);
 
     int hitObstacle = 0;

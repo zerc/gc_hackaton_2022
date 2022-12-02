@@ -35,6 +35,8 @@ int main(void)
     player.sprite = InitSprite("../assets/player.png", 72, 8, 3);
     player.enemyCollisionFrames = 0; // no collision with an enemy
     player.isAlive = true;
+    player.attackFrames = 10;
+    player.attackFramesCurrent = 0;
 
     // Init Environment
     EnvItem envItems[] = {
@@ -160,7 +162,14 @@ int main(void)
         for (int i = 0; i < enemiesCount; i++)
             DrawSprite(&(enemies[i].sprite), (Vector2){enemies[i].rect.x, enemies[i].rect.y});
 
-        DrawSprite(&(player.sprite), (Vector2){player.rect.x, player.rect.y});
+        if (player.attackFramesCurrent > 0)
+        {
+            DrawTexturePro(player.sprite.texture, player.sprite.frameRec, player.rect, (Vector2){player.sprite.width / 2, player.sprite.texture.height / 2}, player.attackFramesCurrent * 10 * -1, WHITE);
+        }
+        else
+        {
+            DrawSprite(&(player.sprite), (Vector2){player.rect.x, player.rect.y});
+        }
 
         EndMode2D();
 

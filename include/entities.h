@@ -34,6 +34,8 @@ typedef struct Player
     Sprite sprite;
     int enemyCollisionFrames;
     bool isAlive;
+    int attackFrames;
+    int attackFramesCurrent;
 } Player;
 
 typedef struct Enemy
