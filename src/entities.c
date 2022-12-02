@@ -70,7 +70,7 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
         player->canJump = false;
     }
 
-    if (IsKeyDown(KEY_ENTER) && player->attackFramesCurrent == 0)
+    if (IsKeyDown(KEY_LEFT_CONTROL) && player->attackFramesCurrent == 0)
     {
         player->attackFramesCurrent = player->attackFrames;
     }
@@ -193,7 +193,7 @@ void UpdateEnemy(Enemy *enemy, EnvItem *envItems, Player *player, int envItemsLe
             enemy->speed = 0.1;
         }
 
-        if (IsKeyDown(KEY_ENTER) && player->enemyCollisionFrames > 0 && player->enemyCollisionFrames < NUM_FRAMES_TO_REACT)
+        if (IsKeyDown(KEY_LEFT_CONTROL) && player->enemyCollisionFrames > 0 && player->enemyCollisionFrames < NUM_FRAMES_TO_REACT)
         {
             enemy->isAlive = false;
             player->enemyCollisionFrames = 0;
