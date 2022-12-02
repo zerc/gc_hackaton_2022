@@ -48,6 +48,7 @@ typedef struct EnvItem
 {
     Rectangle rect;
     Color color;
+    Texture2D *texture;
     enum COLLISION_GROUP collisionGroup;
 } EnvItem;
 

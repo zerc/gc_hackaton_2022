@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "entities.h"
+#include "textures.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -17,6 +18,11 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Make the world Cardless");
 
+    Texture2D background = LoadTexture("../assets/sky.png");
+    Texture2D floorOne = LoadTexture("../assets/floor_1.png");
+    Texture2D floorTwo = LoadTexture("../assets/floor_2.png");
+    Texture2D floorThree = LoadTexture("../assets/floor_3.png");
+
     // Init Player
     Player player = {0};
     player.rect = (Rectangle){80 - 72 / 2, 300 - unitHeight, 72, unitHeight};
@@ -28,23 +34,26 @@ int main(void)
 
     // Init Environment
     EnvItem envItems[] = {
-        {{-600, 300, 2048, 300}, GREEN, WITH_ALL},
+        {{-600, 300, 2048, 300}, GREEN, 0, WITH_ALL},
+        {{120, 100, 780, 200}, GRAY, &floorOne, WITH_NONE},    // facade floor1
+        {{120, -100, 780, 200}, GRAY, &floorTwo, WITH_NONE},   // facade floor2
+        {{120, -300, 780, 200}, GRAY, &floorThree, WITH_NONE}, // facade floor3
 
-        {{120, 200, 40, 100}, GRAY, WITH_NONE}, // door
-        {{120, -300, 40, 500}, RED, WITH_ALL},  // left wall
-        {{160, 100, 600, 20}, BLUE, WITH_ALL},  // ground floor ceiling
+        {{120, 200, 40, 100}, GRAY, 0, WITH_NONE}, // door
+        {{120, -300, 40, 500}, RED, 0, WITH_ALL},  // left wall
+        {{160, 100, 600, 20}, BLUE, 0, WITH_ALL},  // ground floor ceiling
 
-        {{900, -300, 40, 600}, RED, WITH_ALL},  // right wall
-        {{300, -100, 600, 20}, BLUE, WITH_ALL}, // 1st floor ceiling
+        {{900, -300, 40, 600}, RED, 0, WITH_ALL},  // right wall
+        {{300, -100, 600, 20}, BLUE, 0, WITH_ALL}, // 1st floor ceiling
 
-        {{160, -300, 740, 20}, BLUE, WITH_ALL}, // 2nd floor ceiling
+        {{160, -300, 740, 20}, BLUE, 0, WITH_ALL}, // 2nd floor ceiling
 
-        {{-200, -200, 10, 500}, BLANK, WITH_ALL}, // left wall
+        {{-200, -200, 10, 500}, BLANK, 0, WITH_ALL}, // left wall
 
         // Limit enemies movement
-        {{160, 200, 10, 100}, BLANK, WITH_ENEMY_ONLY},  // ground floor
-        {{700, 0, 10, 100}, BLANK, WITH_ENEMY_ONLY},    // 1st floor
-        {{300, -200, 10, 100}, BLANK, WITH_ENEMY_ONLY}, // 2nd floor
+        {{160, 200, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY},  // ground floor
+        {{700, 0, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY},    // 1st floor
+        {{300, -200, 10, 100}, BLANK, 0, WITH_ENEMY_ONLY}, // 2nd floor
 
     };
     int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
@@ -118,12 +127,22 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(LIGHTGRAY);
+        ClearBackground(WHITE);
+        DrawTexture(background, 0, 0, WHITE);
 
         BeginMode2D(camera);
 
         for (int i = 0; i < envItemsLength; i++)
-            DrawRectangleRec(envItems[i].rect, envItems[i].color);
+        {
+            if (envItems[i].texture)
+            {
+                DrawTextureTiled(*(envItems[i].texture), (Rectangle){0, 0, 800, 200}, envItems[i].rect, (Vector2){0, 0}, 0, 1, WHITE);
+            }
+            else
+            {
+                DrawRectangleRec(envItems[i].rect, envItems[i].color);
+            }
+        }
 
         for (int i = 0; i < enemiesCount; i++)
             DrawSprite(&(enemies[i].sprite), (Vector2){enemies[i].rect.x, enemies[i].rect.y});

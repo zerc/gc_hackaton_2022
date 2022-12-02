@@ -1,5 +1,6 @@
 set(SOURCES 
     entities.c
+    textures.c
 )
 
 add_library(gc_lib ${SOURCES})
