@@ -26,6 +26,8 @@ int main(void)
     Texture2D grass = LoadTexture("../assets/grass.png");
     Texture2D tree = LoadTexture("../assets/tree.png");
     Texture2D temple = LoadTexture("../assets/temple.png");
+    Texture2D win = LoadTexture("../assets/win.png");
+    Texture2D lose = LoadTexture("../assets/lose.png");
 
     // Init Player
     Player player = {0};
@@ -103,6 +105,10 @@ int main(void)
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    // Variables for the final screens
+    const int winBarMax = 200;
+    int winBarCurrent = 0;
+
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
@@ -143,6 +149,7 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(WHITE);
+
         DrawTexture(background, 0, 0, WHITE);
 
         BeginMode2D(camera);
@@ -179,15 +186,16 @@ int main(void)
         }
         else if (activeEnemiesCount == 0)
         {
-            DrawRectangle(0, 0, screenWidth, screenHeight, YELLOW);
-            DrawText("<Your generic merchant> ltd", 20, 20, 40, BLACK);
-            DrawText("is", 60, 60, 40, BLACK);
-            DrawText("Cardless!", 120, 120, 60, BLACK);
+            winBarCurrent++;
+            winBarCurrent = Clamp(winBarCurrent, 0, winBarMax);
+            DrawTexture(win, 0, 0, WHITE);
+            DrawRectangle(200, 270, winBarMax * 2, 60, GRAY);
+            DrawRectangle(200, 270, winBarCurrent, 60, YELLOW);
+            DrawText("Revenue", 230, 290, 30, BLACK);
         }
         else if (!player.isAlive)
         {
-            DrawRectangle(0, 0, screenWidth, screenHeight, RED);
-            DrawText("Game Over", 20, 20, 40, BLACK);
+            DrawTexture(lose, 0, 0, WHITE);
         }
 
         EndDrawing();
