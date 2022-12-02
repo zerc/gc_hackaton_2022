@@ -71,18 +71,24 @@ int main(void)
             .rect = {600 - 72 / 2, 300 - unitHeight, 72, unitHeight},
             .speed = 250,
             .direction = -1,
+            .isAlive = true,
+            .isVisible = true,
         },
         {
             .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
             .rect = {300 - 72, 100 - unitHeight, 72, unitHeight},
             .speed = 300,
             .direction = 1,
+            .isAlive = true,
+            .isVisible = true,
         },
         {
             .sprite = InitSprite("../assets/enemy.png", 72, 8, 3),
             .rect = {400 - 72, -100 - unitHeight, 72, unitHeight},
             .speed = 350,
             .direction = 1,
+            .isAlive = true,
+            .isVisible = true,
         },
 
     };
@@ -114,7 +120,7 @@ int main(void)
             for (int i = 0; i < enemiesCount; i++)
             {
                 UpdateEnemy(&enemies[i], envItems, &player, envItemsLength, deltaTime);
-                if (enemies[i].speed > 0)
+                if (enemies[i].isVisible)
                     activeEnemiesCount += 1;
             }
 

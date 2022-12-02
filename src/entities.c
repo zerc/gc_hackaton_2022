@@ -3,6 +3,8 @@
 #include "entities.h"
 #include "raymath.h"
 
+#define NUM_FRAMES_TO_REACT 5
+
 Sprite InitSprite(const char *fileName, int width, int framesSpeed, int framesTotal)
 {
     Texture2D playerTexture = LoadTexture(fileName);
@@ -47,7 +49,7 @@ void DrawSprite(Sprite *sprite, Vector2 target)
 
 void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta)
 {
-    if (player->enemyCollisionFrames > 0 && player->enemyCollisionFrames > 20)
+    if (player->enemyCollisionFrames > 0 && player->enemyCollisionFrames > NUM_FRAMES_TO_REACT)
     {
         player->isAlive = false;
         return;
@@ -121,10 +123,19 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
 
 void UpdateEnemy(Enemy *enemy, EnvItem *envItems, Player *player, int envItemsLength, float delta)
 {
-    if (enemy->speed == 0)
+    if (fabsf(enemy->rect.x) > 2048 && !enemy->isAlive)
+    {
+        enemy->isVisible = false;
         return;
+    }
 
     enemy->rect.x += enemy->direction * enemy->speed * delta;
+
+    if (!enemy->isAlive)
+    {
+        enemy->rect.y -= sinf(enemy->rect.y) * enemy->speed * delta;
+        return;
+    }
 
     Rectangle *p = &(enemy->rect);
 
@@ -165,20 +176,20 @@ void UpdateEnemy(Enemy *enemy, EnvItem *envItems, Player *player, int envItemsLe
             if (enemy->direction == 1)
             {
                 p->x = r.x - p->width;
-                // enemy->direction *= -1;
             }
             else if (enemy->direction == -1)
             {
                 p->x = player->rect.x + player->rect.width;
-                // enemy->direction *= -1;
             }
             enemy->speed = 0.1;
         }
 
-        if (IsKeyDown(KEY_ENTER) && player->enemyCollisionFrames > 0 && player->enemyCollisionFrames < 20)
+        if (IsKeyDown(KEY_ENTER) && player->enemyCollisionFrames > 0 && player->enemyCollisionFrames < NUM_FRAMES_TO_REACT)
         {
-            enemy->speed = 0; // the enemey killed
+            enemy->isAlive = false;
             player->enemyCollisionFrames = 0;
+            enemy->direction *= -1;
+            enemy->speed = 500;
         }
     }
 

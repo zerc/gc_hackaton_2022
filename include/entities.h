@@ -42,6 +42,8 @@ typedef struct Enemy
     Rectangle rect;
     float speed;
     int direction;
+    bool isAlive;
+    bool isVisible;
 } Enemy;
 
 typedef struct EnvItem
